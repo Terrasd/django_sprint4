@@ -122,7 +122,8 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = get_object_or_404(
-            self.model.objects.select_related('location', 'author', 'category'),
+            self.model.objects.select_related(
+                'location', 'author', 'category'),
             pk=self.kwargs['id']
         )
         if not post.is_published and self.request.user != post.author:
