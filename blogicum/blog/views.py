@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
@@ -120,11 +121,13 @@ class PostDetailView(DetailView):
     template_name = 'blog/detail.html'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(
-            self.model.objects.select_related('location', 'author', 'category')
-            .filter(pub_date__lte=timezone.now(),
-                    is_published=True,
-                    category__is_published=True), pk=self.kwargs['id'])
+        post = get_object_or_404(
+            self.model.objects.select_related('location', 'author', 'category'),
+            pk=self.kwargs['id']
+        )
+        if not post.is_published and self.request.user != post.author:
+            raise Http404("Этот пост снят с публикации и не доступен.")
+        return post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
