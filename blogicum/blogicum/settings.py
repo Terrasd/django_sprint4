@@ -6,7 +6,10 @@ SECRET_KEY = 'django-insecure-ocu_qy=(rh*yp_wg6vq0#0c(591r+wl)x6-sg_r9gq%w07=da+
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
