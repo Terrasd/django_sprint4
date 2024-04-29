@@ -101,8 +101,8 @@ class ProfileListView(ListView):
             User, username=self.kwargs['username'])
         context['profile'] = profile_user
         context['editable'] = (
-            self.request.user == profile_user and
-            self.request.user.is_authenticated)
+            self.request.user == profile_user
+            and self.request.user.is_authenticated)
         return context
 
 
