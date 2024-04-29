@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from .constants import MAX_LENGTH, MAX_LENGTH_ADMIN_PANEL
+
 User = get_user_model()
 
 
@@ -20,18 +22,20 @@ class BaseModel(models.Model):
 
 
 class Location(BaseModel):
-    name = models.CharField(max_length=256, verbose_name='Название места')
+    name = models.CharField(
+        max_length=MAX_LENGTH, verbose_name='Название места')
 
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
+        ordering = ('name',)
 
     def __str__(self):
-        return self.name
+        return self.name[:MAX_LENGTH_ADMIN_PANEL]
 
 
 class Category(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         unique=True,
@@ -42,13 +46,14 @@ class Category(BaseModel):
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
+        ordering = ('title',)
 
     def __str__(self):
-        return self.title
+        return self.title[:MAX_LENGTH_ADMIN_PANEL]
 
 
 class Post(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
+    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -57,7 +62,8 @@ class Post(BaseModel):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор публикации'
+        verbose_name='Автор публикации',
+        related_name='posts'
     )
     location = models.ForeignKey(
         Location,
@@ -71,7 +77,7 @@ class Post(BaseModel):
         Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='post',
+        related_name='posts',
         verbose_name='Категория'
     )
     image = models.ImageField(
@@ -82,10 +88,10 @@ class Post(BaseModel):
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.title
+        return self.title[:MAX_LENGTH_ADMIN_PANEL]
 
 
 class Comment(models.Model):
@@ -93,7 +99,7 @@ class Comment(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comment',
+        related_name='comments',
         verbose_name='публикация'
     )
     created_at = models.DateTimeField(auto_now_add=True,
@@ -108,4 +114,4 @@ class Comment(models.Model):
         ordering = ('created_at',)
 
     def __str__(self):
-        return f"Комментарий пользователя {self.author}"
+        return f'Комментарий пользователя {self.author} к посту {self.post}'
