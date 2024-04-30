@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from .constants import MAX_LENGTH, MAX_LENGTH_ADMIN_PANEL
+from .constants import MAX_LENGTH_CHARFIELD, MAX_LENGTH_ADMIN_PANEL
 
 User = get_user_model()
 
@@ -23,7 +23,7 @@ class BaseModel(models.Model):
 
 class Location(BaseModel):
     name = models.CharField(
-        max_length=MAX_LENGTH, verbose_name='Название места')
+        max_length=MAX_LENGTH_CHARFIELD, verbose_name='Название места')
 
     class Meta:
         verbose_name = 'местоположение'
@@ -35,7 +35,9 @@ class Location(BaseModel):
 
 
 class Category(BaseModel):
-    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
+    title = models.CharField(
+        max_length=MAX_LENGTH_CHARFIELD,
+        verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         unique=True,
@@ -53,7 +55,9 @@ class Category(BaseModel):
 
 
 class Post(BaseModel):
-    title = models.CharField(max_length=MAX_LENGTH, verbose_name='Заголовок')
+    title = models.CharField(
+        max_length=MAX_LENGTH_CHARFIELD,
+        verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
